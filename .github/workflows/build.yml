@@ -23,7 +23,8 @@ jobs:
       # 设置 Git 用户信息
       - name: Set up Git user information
         run: |
-          git config --global url.https://${{ secrets.DEPLOY_KEY }}@github.com/.insteadOf https://github.com/
+          git config --global user.name "ayxworxfr"
+          git config --global user.email "3475296507@qq.com"
 
       # 设置 Node.js 20.x 版本
       - name: Set up Node.js 20.x
