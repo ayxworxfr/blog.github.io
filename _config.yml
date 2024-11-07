@@ -7,13 +7,13 @@ title: Hexo
 subtitle: ''
 description: ''
 keywords:
-author: John Doe
-language: en
-timezone: ''
+author: Graycen Zheng
+language: zh-CN
+timezone: 'Asia/Shanghai'
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: http://example.com
+url: https://github.com/ayxworxfr/blog
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -96,9 +96,20 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: fluid
+
+# hexo-admin authentification
+admin:
+  username: graycen
+  password_hash: $2a$10$yE1DamAZjxXSftdjmwo0/OQ9fQfd.ath68J3rCzRVtjVe0gOkN9Ci
+  secret: graycen
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
-  type: ''
+  type: git
+  repo: https://github.com/ayxworxfr/blog #https://bitbucket.org/JohnSmith/johnsmith.bitbucket.io
+  branch: main
+  # message: [message]
+
+
