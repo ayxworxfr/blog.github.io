@@ -1,7 +1,12 @@
-name: Deploy
-
-on: [push]
-
+# 定义一个名为 Pages 的动作
+name: Pages
+ 
+# 当有一个新的推送（push）到名为 hexo 的分支时，执行部署任务
+on:
+  push:
+    branches:
+      - hexo
+ 
 # 定义一个名为 build-and-deploy 的 job
 jobs:
   build-and-deploy:
@@ -9,18 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # 检出 hexooo 分支的代码
-      - name: Checkout code from main branch
+      - name: Checkout code from hexo branch
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: hexo
           persist-credentials: false
  
       # 设置 Git 用户信息
       - name: Set up Git user information
         run: |
-          git config --global user.name "ayxworxfr"
-          git config --global user.email "3475296507@qq.com"
- 
+          git config --global url.https://${{ secrets.DEPLOY_KEY }}@github.com/.insteadOf https://github.com/
+
       # 设置 Node.js 20.x 版本
       - name: Set up Node.js 20.x
         uses: actions/setup-node@v2
