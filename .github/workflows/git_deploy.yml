@@ -23,8 +23,8 @@ jobs:
       # 设置 Git 用户信息
       - name: Set up Git user information
         run: |
-          git config --global user.name "ayxworxfr"
-          git config --global user.email "3475296507@qq.com"
+          git config --global user.name "${{ vars._GIT_USER }}"
+          git config --global user.email "${{ vars._GIT_MAIL }}"
 
       # 设置 Node.js 20.x 版本
       - name: Set up Node.js 20.x
