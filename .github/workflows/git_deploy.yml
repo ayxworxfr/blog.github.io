@@ -1,63 +1,40 @@
-# 定义一个名为 Pages 的动作
 name: Pages
- 
-# 当有一个新的推送（push）到名为 hexo 的分支时，执行部署任务
+
 on:
   push:
     branches:
-      - hexo
- 
-# 定义一个名为 build-and-deploy 的 job
+      - hexo # default branch
+
 jobs:
   build:
-    # 在 Ubuntu 最新版本上运行此 job
     runs-on: ubuntu-latest
     steps:
-      # 检出 hexooo 分支的代码
-      - name: Checkout code from hexo branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          ref: hexo
-          persist-credentials: false
- 
-      # 设置 Git 用户信息
-      - name: Set up Git user information
-        run: |
-          git config --global user.name "${{ vars._GIT_USER }}"
-          git config --global user.email "${{ vars._GIT_MAIL }}"
-
-      # 设置 Node.js 20.x 版本
-      - name: Set up Node.js 20.x
-        uses: actions/setup-node@v2
+          token: ${{ secrets.DEPLOY_KEY }}
+          # If your repository depends on submodule, please see: https://github.com/actions/checkout
+          submodules: recursive
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
-  
-      # 全局安装 Hexo
-      - name: Install Hexo globally
-        run: |
-          npm install -g hexo-cli
-          npm install
- 
-      # 缓存 NPM 依赖
+          # Examples: 20, 18.19, >=16.20.2, lts/Iron, lts/Hydrogen, *, latest, current, node
+          # Ref: https://github.com/actions/setup-node#supported-version-syntax
+          node-version: "20"
       - name: Cache NPM dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: node_modules
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.OS }}-npm-cache
           restore-keys: |
-            ${{ runner.OS }}-node-
- 
-      # 使用环境变量 ACTION_DEPLOY_KEY 部署到主分支
-      - name: Deploy to main branch
-        env:
-          ACTION_DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$ACTION_DEPLOY_KEY" > ~/.ssh/id_rsa
-          chmod 700 ~/.ssh
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-  # 部署
+            ${{ runner.OS }}-npm-cache
+      - name: Install Dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
   deploy:
     needs: build
     permissions:
@@ -65,7 +42,7 @@ jobs:
       id-token: write
     environment:
       name: github-pages
-      url: https://ayxworxfr.github.io/ayxworxfr/blog
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
