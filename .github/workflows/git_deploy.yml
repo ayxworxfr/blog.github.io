@@ -9,7 +9,7 @@ on:
  
 # 定义一个名为 build-and-deploy 的 job
 jobs:
-  build-and-deploy:
+  build:
     # 在 Ubuntu 最新版本上运行此 job
     runs-on: ubuntu-latest
     steps:
@@ -57,9 +57,17 @@ jobs:
           chmod 700 ~/.ssh
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-      # 部署
-      - name: Deploy
-        run: |
-          hexo clean
-          hexo generate
-          hexo deploy
+  # 部署
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: https://ayxworxfr.github.io/ayxworxfr/blog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
